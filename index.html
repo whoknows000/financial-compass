@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Compass | Your Financial Intelligence Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;500;600&family=Share+Tech&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --ocean-teal: #4A90A4;
+            --soft-pearl: #F5F7FA;
+            --light-mist: #E8EDF2;
+            --dark-accent: #2C3E50;
+            --success: #27AE60;
+            --warning: #E67E22;
+            --danger: #E74C3C;
+            --info: #3498DB;
+            --purple: #9B59B6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--soft-pearl);
+            color: var(--dark-accent);
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        button, input, select {
+            font-family: 'Share Tech', monospace;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--dark-accent) 0%, var(--ocean-teal) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-family: 'Share Tech', monospace;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        /* Download Button */
+        .download-btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 15px;
+        }
+        
+        .download-btn:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+        }
+        
+        /* Download Modal */
+        .download-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .download-modal-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .download-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .download-option {
+            background-color: var(--light-mist);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .download-option:hover {
+            border-color: var(--ocean-teal);
+            transform: translateY(-5px);
+        }
+        
+        .download-option.selected {
+            border-color: var(--ocean-teal);
+            background-color: rgba(74, 144, 164, 0.1);
+        }
+        
+        .download-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 140px);
+        }
+        
+        .tool-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+            display: none;
+        }
+        
+        .tool-section.active {
+            display: block;
+        }
+        
+        .tool-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-mist);
+            padding-bottom: 1rem;
+        }
+        
+        .tool-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tool-icon {
+            font-size: 1.5rem;
+            color: var(--ocean-teal);
+        }
+        
+        .tool-badge {
+            background-color: var(--ocean-teal);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Share Tech', monospace;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--light-mist);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: var(--ocean-teal);
+            outline: none;
+        }
+        
+        .btn {
+            background-color: var(--ocean-teal);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: var(--dark-accent);
+            transform: translateY(-2px);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        /* Visualization Containers */
+        .visualization {
+            background-color: var(--light-mist);
+            border-radius: 8px;
+            padding: 1.5rem;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        /* Output Sections */
+        .output-section {
+            background-color: var(--light-mist);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-warning {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .alert-success {
+            background-color: rgba(39, 174, 96, 0.1);
+            border-left: 4px solid var(--success);
+        }
+        
+        .alert-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .alert-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--info);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-accent);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--ocean-teal);
+        }
+        
+        /* Tool Cards */
+        .tool-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Guide Sections */
+        .guide-section {
+            background-color: var(--light-mist);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .guide-toggle {
+            background: none;
+            border: none;
+            color: var(--ocean-teal);
+            cursor: pointer;
+            font-family: 'Share Tech', monospace;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .guide-content {
+            display: none;
+        }
+        
+        .guide-content.active {
+            display: block;
+        }
+        
+        .guide-step {
+            display: flex;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+        
+        .guide-number {
+            background-color: var(--ocean-teal);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-btn {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧭</span>
+                    <h1>Financial Compass</h1>
+                </div>
+                <button class="download-btn" id="download-btn">
+                    <span>📥</span> Export Data
+                </button>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-tool="dashboard">Dashboard</a></li>
+                        <li><a href="#" class="nav-link" data-tool="budgeting">Smart Budgeting</a></li>
+                        <li><a href="#" class="nav-link" data-tool="genome">Financial Genome</a></li>
+                        <li><a href="#" class="nav-link" data-tool="portfolio">Portfolio Optimizer</a></li>
+                        <li><a href="#" class="nav-link" data-tool="time-dilation">Time Dilation</a></li>
+                        <li><a href="#" class="nav-link" data-tool="cash-flow">Cash Flow Analyzer</a></li>
+                        <li><a href="#" class="nav-link" data-tool="immune-system">Immune System</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Dashboard -->
+        <section id="dashboard" class="tool-section active">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">📊</span>
+                    <h2>Financial Dashboard</h2>
+                </div>
+            </div>
+            
+            <p>Welcome to Financial Compass! Select a tool below to get started with your financial analysis.</p>
+            
+            <div class="dashboard">
+                <div class="tool-card" data-tool="budgeting">
+                    <h3>💰 Smart Budgeting System</h3>
+                    <p>Create and track intelligent budgets with real-time alerts</p>
+                </div>
+                
+                <div class="tool-card" data-tool="genome">
+                    <h3>🧬 Financial Genome Project</h3>
+                    <p>Analyze spending patterns and predict future behavior</p>
+                </div>
+                
+                <div class="tool-card" data-tool="portfolio">
+                    <h3>📈 Quantum Portfolio Optimizer</h3>
+                    <p>Advanced investment analysis with optimal allocation</p>
+                </div>
+                
+                <div class="tool-card" data-tool="time-dilation">
+                    <h3>🕒 Financial Time Dilation Engine</h3>
+                    <p>Visualize time-value of money across life stages</p>
+                </div>
+                
+                <div class="tool-card" data-tool="cash-flow">
+                    <h3>🌀 Cash Flow Quantum Field Analyzer</h3>
+                    <p>Advanced cash flow forecasting with probability projections</p>
+                </div>
+                
+                <div class="tool-card" data-tool="immune-system">
+                    <h3>🛡️ Financial Immune System Builder</h3>
+                    <p>Stress test financial resilience and build protection</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SMART BUDGETING SYSTEM -->
+        <section id="budgeting" class="tool-section">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">💰</span>
+                    <h2>Smart Budgeting System</h2>
+                </div>
+                <span class="tool-badge">Active</span>
+            </div>
+            
+            <div class="guide-section">
+                <button class="guide-toggle" data-guide="budgeting-guide">
+                    <span>📋</span> How to Use This Tool
+                </button>
+                <div class="guide-content" id="budgeting-guide">
+                    <h4>Smart Budgeting System Guide</h4>
+                    <p>This tool helps you create a personalized budget based on your income, expenses, and savings goals.</p>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">1</div>
+                        <div>Enter your monthly income in the "Monthly Income" field</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">2</div>
+                        <div>Input your expenses in each category (Housing, Food, Transportation, Entertainment)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">3</div>
+                        <div>Set your monthly savings goal</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">4</div>
+                        <div>Click "Calculate Budget" to see your personalized budget plan</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">5</div>
+                        <div>Review the visual chart and recommendations to optimize your budget</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Input Your Financial Details</h3>
+                    <div class="input-group">
+                        <label for="income">Monthly Income ($)</label>
+                        <input type="number" id="income" placeholder="5000" value="5000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="housing">Housing Expenses ($)</label>
+                        <input type="number" id="housing" placeholder="1500" value="1500">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="food">Food & Dining ($)</label>
+                        <input type="number" id="food" placeholder="600" value="600">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="transportation">Transportation ($)</label>
+                        <input type="number" id="transportation" placeholder="400" value="400">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="entertainment">Entertainment ($)</label>
+                        <input type="number" id="entertainment" placeholder="300" value="300">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="savings-goal">Monthly Savings Goal ($)</label>
+                        <input type="number" id="savings-goal" placeholder="1000" value="1000">
+                    </div>
+                    
+                    <button class="btn btn-block" id="calculate-budget">Calculate Budget</button>
+                </div>
+                
+                <div>
+                    <h3>Your Budget Visualization</h3>
+                    <div class="visualization">
+                        <canvas id="budget-chart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="output-section">
+                        <h4>Budget Analysis</h4>
+                        <div id="budget-alerts">
+                            <!-- Alerts will be inserted here -->
+                        </div>
+                        
+                        <div class="budget-breakdown">
+                            <h5>Recommended Allocation:</h5>
+                            <ul id="budget-recommendations">
+                                <!-- Recommendations will be inserted here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCIAL GENOME PROJECT -->
+        <section id="genome" class="tool-section">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">🧬</span>
+                    <h2>Financial Genome Project</h2>
+                </div>
+                <span class="tool-badge">Analytical</span>
+            </div>
+            
+            <div class="guide-section">
+                <button class="guide-toggle" data-guide="genome-guide">
+                    <span>📋</span> How to Use This Tool
+                </button>
+                <div class="guide-content" id="genome-guide">
+                    <h4>Financial Genome Project Guide</h4>
+                    <p>This tool analyzes your spending patterns to identify your financial personality and predict future behavior.</p>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">1</div>
+                        <div>Upload your transaction history CSV file OR manually select your spending category</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">2</div>
+                        <div>Describe your monthly spending pattern in the text area</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">3</div>
+                        <div>Click "Analyze Spending DNA" to generate your financial profile</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">4</div>
+                        <div>Review your spending personality type and future projections</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">5</div>
+                        <div>Implement the personalized recommendations to improve your financial health</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Upload Transaction History</h3>
+                    <div class="input-group">
+                        <label for="transaction-file">CSV File Upload</label>
+                        <input type="file" id="transaction-file" accept=".csv">
+                    </div>
+                    
+                    <p>Or input manually:</p>
+                    <div class="input-group">
+                        <label for="spending-categories">Spending Categories</label>
+                        <select id="spending-categories">
+                            <option value="balanced">Balanced Spender</option>
+                            <option value="saver">Conservative Saver</option>
+                            <option value="spender">Impulsive Spender</option>
+                            <option value="investor">Strategic Investor</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="spending-pattern">Monthly Spending Pattern</label>
+                        <textarea id="spending-pattern" rows="4" placeholder="Describe your spending habits..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-block" id="analyze-spending">Analyze Spending DNA</button>
+                </div>
+                
+                <div>
+                    <h3>Your Financial DNA</h3>
+                    <div class="visualization">
+                        <canvas id="dna-chart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="output-section">
+                        <h4>Spending Personality: <span id="personality-type">Balanced Spender</span></h4>
+                        <p id="personality-description">You maintain a healthy balance between spending and saving, with occasional indulgences that don't derail your financial goals.</p>
+                        
+                        <div class="grid-3">
+                            <div>
+                                <h5>Top Categories</h5>
+                                <ol id="top-categories">
+                                    <!-- Categories will be inserted here -->
+                                </ol>
+                            </div>
+                            <div>
+                                <h5>Future Projections</h5>
+                                <ul id="future-projections">
+                                    <!-- Projections will be inserted here -->
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>Recommendations</h5>
+                                <ul id="genome-recommendations">
+                                    <!-- Recommendations will be inserted here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUANTUM PORTFOLIO OPTIMIZER -->
+        <section id="portfolio" class="tool-section">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">📈</span>
+                    <h2>Quantum Portfolio Optimizer</h2>
+                </div>
+                <span class="tool-badge">Advanced</span>
+            </div>
+            
+            <div class="guide-section">
+                <button class="guide-toggle" data-guide="portfolio-guide">
+                    <span>📋</span> How to Use This Tool
+                </button>
+                <div class="guide-content" id="portfolio-guide">
+                    <h4>Quantum Portfolio Optimizer Guide</h4>
+                    <p>This tool analyzes your current investment portfolio and provides optimized allocation recommendations.</p>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">1</div>
+                        <div>Enter your current portfolio allocation percentages for Stocks, Bonds, and Cash</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">2</div>
+                        <div>Select your risk tolerance (Conservative, Moderate, or Aggressive)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">3</div>
+                        <div>Choose your primary investment goal</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">4</div>
+                        <div>Click "Optimize Portfolio" to generate recommendations</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">5</div>
+                        <div>Review the comparison chart and risk assessment to adjust your portfolio</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Current Portfolio</h3>
+                    <div class="input-group">
+                        <label for="stocks">Stocks (%)</label>
+                        <input type="number" id="stocks" min="0" max="100" value="60">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="bonds">Bonds (%)</label>
+                        <input type="number" id="bonds" min="0" max="100" value="30">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="cash">Cash (%)</label>
+                        <input type="number" id="cash" min="0" max="100" value="10">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="risk-tolerance">Risk Tolerance</label>
+                        <select id="risk-tolerance">
+                            <option value="conservative">Conservative</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="aggressive">Aggressive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="investment-goal">Investment Goal</label>
+                        <select id="investment-goal">
+                            <option value="retirement">Retirement</option>
+                            <option value="growth" selected>Growth</option>
+                            <option value="income">Income</option>
+                            <option value="preservation">Capital Preservation</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-block" id="optimize-portfolio">Optimize Portfolio</button>
+                </div>
+                
+                <div>
+                    <h3>Portfolio Analysis</h3>
+                    <div class="visualization">
+                        <canvas id="portfolio-chart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="output-section">
+                        <h4>Optimal Allocation</h4>
+                        <div class="grid-3">
+                            <div>
+                                <h5>Current</h5>
+                                <ul id="current-allocation">
+                                    <!-- Current allocation will be inserted here -->
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>Recommended</h5>
+                                <ul id="recommended-allocation">
+                                    <!-- Recommended allocation will be inserted here -->
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>Risk Assessment</h5>
+                                <ul id="risk-assessment">
+                                    <!-- Risk assessment will be inserted here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCIAL TIME DILATION ENGINE -->
+        <section id="time-dilation" class="tool-section">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">🕒</span>
+                    <h2>Financial Time Dilation Engine</h2>
+                </div>
+                <span class="tool-badge">Temporal</span>
+            </div>
+            
+            <div class="guide-section">
+                <button class="guide-toggle" data-guide="time-guide">
+                    <span>📋</span> How to Use This Tool
+                </button>
+                <div class="guide-content" id="time-guide">
+                    <h4>Financial Time Dilation Engine Guide</h4>
+                    <p>This tool visualizes how time affects your money through compound interest across different life stages.</p>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">1</div>
+                        <div>Enter your current age and planned retirement age</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">2</div>
+                        <div>Input your current savings amount</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">3</div>
+                        <div>Set your monthly contribution amount</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">4</div>
+                        <div>Enter your expected annual return rate (typically 5-10%)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">5</div>
+                        <div>Click "Calculate Growth" to see your financial timeline and milestones</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Input Your Data</h3>
+                    <div class="input-group">
+                        <label for="current-age">Current Age</label>
+                        <input type="number" id="current-age" min="18" max="100" value="30">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="retirement-age">Retirement Age</label>
+                        <input type="number" id="retirement-age" min="40" max="100" value="65">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="current-savings">Current Savings ($)</label>
+                        <input type="number" id="current-savings" value="50000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="monthly-contribution">Monthly Contribution ($)</label>
+                        <input type="number" id="monthly-contribution" value="500">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="expected-return">Expected Annual Return (%)</label>
+                        <input type="number" id="expected-return" min="1" max="20" value="7" step="0.1">
+                    </div>
+                    
+                    <button class="btn btn-block" id="calculate-time-dilation">Calculate Growth</button>
+                </div>
+                
+                <div>
+                    <h3>Time-Value Visualization</h3>
+                    <div class="visualization">
+                        <canvas id="time-chart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="output-section">
+                        <h4>Compound Growth Projections</h4>
+                        <div id="growth-multipliers">
+                            <!-- Growth multipliers will be inserted here -->
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div>
+                                <h5>Key Milestones</h5>
+                                <ul id="milestones">
+                                    <!-- Milestones will be inserted here -->
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>Recommendations</h5>
+                                <ul id="time-recommendations">
+                                    <!-- Recommendations will be inserted here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CASH FLOW QUANTUM FIELD ANALYZER -->
+        <section id="cash-flow" class="tool-section">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">🌀</span>
+                    <h2>Cash Flow Quantum Field Analyzer</h2>
+                </div>
+                <span class="tool-badge">Predictive</span>
+            </div>
+            
+            <div class="guide-section">
+                <button class="guide-toggle" data-guide="cash-flow-guide">
+                    <span>📋</span> How to Use This Tool
+                </button>
+                <div class="guide-content" id="cash-flow-guide">
+                    <h4>Cash Flow Quantum Field Analyzer Guide</h4>
+                    <p>This tool provides advanced cash flow forecasting with probability-based projections.</p>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">1</div>
+                        <div>Enter your regular monthly income (salary, etc.)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">2</div>
+                        <div>Input any irregular income (bonuses, freelance work, etc.)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">3</div>
+                        <div>Enter your fixed monthly expenses (rent, loan payments, etc.)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">4</div>
+                        <div>Input your variable monthly expenses (food, entertainment, etc.)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">5</div>
+                        <div>Enter your current emergency fund amount and click "Analyze Cash Flow"</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Input Cash Flow Data</h3>
+                    <div class="input-group">
+                        <label for="regular-income">Regular Income ($/month)</label>
+                        <input type="number" id="regular-income" value="4000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="irregular-income">Irregular Income ($/month)</label>
+                        <input type="number" id="irregular-income" value="1000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="fixed-expenses">Fixed Expenses ($/month)</label>
+                        <input type="number" id="fixed-expenses" value="2500">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="variable-expenses">Variable Expenses ($/month)</label>
+                        <input type="number" id="variable-expenses" value="1500">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="emergency-fund">Emergency Fund ($)</label>
+                        <input type="number" id="emergency-fund" value="10000">
+                    </div>
+                    
+                    <button class="btn btn-block" id="analyze-cash-flow">Analyze Cash Flow</button>
+                </div>
+                
+                <div>
+                    <h3>Cash Flow Projections</h3>
+                    <div class="visualization">
+                        <canvas id="cash-flow-chart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="output-section">
+                        <h4>Probability-Based Forecast</h4>
+                        <div id="cash-flow-alerts">
+                            <!-- Alerts will be inserted here -->
+                        </div>
+                        
+                        <div class="grid-3">
+                            <div>
+                                <h5>3-Month Outlook</h5>
+                                <ul id="three-month-outlook">
+                                    <!-- Outlook will be inserted here -->
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>6-Month Outlook</h5>
+                                <ul id="six-month-outlook">
+                                    <!-- Outlook will be inserted here -->
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>Risk Factors</h5>
+                                <ul id="cash-flow-risks">
+                                    <!-- Risks will be inserted here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCIAL IMMUNE SYSTEM BUILDER -->
+        <section id="immune-system" class="tool-section">
+            <div class="tool-header">
+                <div class="tool-title">
+                    <span class="tool-icon">🛡️</span>
+                    <h2>Financial Immune System Builder</h2>
+                </div>
+                <span class="tool-badge">Protective</span>
+            </div>
+            
+            <div class="guide-section">
+                <button class="guide-toggle" data-guide="immune-guide">
+                    <span>📋</span> How to Use This Tool
+                </button>
+                <div class="guide-content" id="immune-guide">
+                    <h4>Financial Immune System Builder Guide</h4>
+                    <p>This tool stress tests your financial resilience and creates a protection plan against economic shocks.</p>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">1</div>
+                        <div>Enter your monthly income and expenses</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">2</div>
+                        <div>Input your current savings and emergency fund amounts</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">3</div>
+                        <div>Enter your debt information (if any)</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">4</div>
+                        <div>Select potential risk scenarios to test against</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="guide-number">5</div>
+                        <div>Click "Analyze Financial Health" to get your resilience score and protection plan</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Financial Snapshot</h3>
+                    <div class="input-group">
+                        <label for="immune-income">Monthly Income ($)</label>
+                        <input type="number" id="immune-income" value="5000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="immune-expenses">Monthly Expenses ($)</label>
+                        <input type="number" id="immune-expenses" value="3500">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="immune-savings">Savings ($)</label>
+                        <input type="number" id="immune-savings" value="25000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="immune-emergency">Emergency Fund ($)</label>
+                        <input type="number" id="immune-emergency" value="10000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="immune-debt">Total Debt ($)</label>
+                        <input type="number" id="immune-debt" value="15000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="risk-scenarios">Risk Scenarios to Test</label>
+                        <select id="risk-scenarios" multiple>
+                            <option value="job-loss" selected>Job Loss (3 months)</option>
+                            <option value="medical" selected>Medical Emergency ($5,000)</option>
+                            <option value="market" selected>Market Downturn (30%)</option>
+                            <option value="inflation">High Inflation (8%)</option>
+                        </select>
+                        <small>Hold Ctrl/Cmd to select multiple scenarios</small>
+                    </div>
+                    
+                    <button class="btn btn-block" id="analyze-financial-health">Analyze Financial Health</button>
+                </div>
+                
+                <div>
+                    <h3>Financial Health Dashboard</h3>
+                    <div class="visualization">
+                        <canvas id="immune-chart" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="output-section">
+                        <h4>Resilience Analysis</h4>
+                        <div id="immune-alerts">
+                            <!-- Alerts will be inserted here -->
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div>
+                                <h5>Vulnerability Score</h5>
+                                <div id="vulnerability-score">65/100</div>
+                                <p>Your financial immune system strength</p>
+                            </div>
+                            <div>
+                                <h5>Protection Plan</h5>
+                                <ul id="protection-plan">
+                                    <!-- Protection plan will be inserted here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Download Modal -->
+    <div class="download-modal" id="download-modal">
+        <div class="download-modal-content">
+            <h2>Export Your Financial Data</h2>
+            <p>Select what you'd like to download:</p>
+            
+            <div class="download-options">
+                <div class="download-option" data-type="current-tool">
+                    <div class="download-icon">📊</div>
+                    <h4>Current Tool</h4>
+                    <p>Export data from the currently active tool</p>
+                </div>
+                
+                <div class="download-option" data-type="all-data">
+                    <div class="download-icon">💾</div>
+                    <h4>All Data</h4>
+                    <p>Export all your financial data from all tools</p>
+                </div>
+                
+                <div class="download-option" data-type="pdf-report">
+                    <div class="download-icon">📄</div>
+                    <h4>PDF Report</h4>
+                    <p>Generate a comprehensive PDF report</p>
+                </div>
+                
+                <div class="download-option" data-type="csv-data">
+                    <div class="download-icon">📈</div>
+                    <h4>CSV Data</h4>
+                    <p>Download your data as CSV for analysis</p>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn" id="cancel-download">Cancel</button>
+                <button class="btn" id="confirm-download" style="background-color: var(--success);">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <span class="logo-icon">🧭</span>
+                    <h2>Financial Compass</h2>
+                </div>
+                <p>Your complete financial intelligence platform. 100% free. 100% private.</p>
+                
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">About Us</a>
+                    <a href="#">Contact</a>
+                </div>
+                
+                <p>&copy; 2023 Financial Compass. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentTool = 'dashboard';
+        let budgetChart, dnaChart, portfolioChart, timeChart, cashFlowChart, immuneChart;
+        let downloadType = 'current-tool';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavigation();
+            initializeToolCards();
+            initializeBudgetingTool();
+            initializeGenomeTool();
+            initializePortfolioTool();
+            initializeTimeDilationTool();
+            initializeCashFlowTool();
+            initializeImmuneSystemTool();
+            initializeDownloadModal();
+            initializeGuides();
+            
+            // Show dashboard by default
+            showTool('dashboard');
+        });
+
+        // Navigation functionality
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tool = this.getAttribute('data-tool');
+                    
+                    // Update active nav link
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show selected tool
+                    showTool(tool);
+                });
+            });
+        }
+
+        // Tool cards functionality
+        function initializeToolCards() {
+            const toolCards = document.querySelectorAll('.tool-card');
+            
+            toolCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const tool = this.getAttribute('data-tool');
+                    
+                    // Update active nav link
+                    const navLinks = document.querySelectorAll('.nav-link');
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    document.querySelector(`.nav-link[data-tool="${tool}"]`).classList.add('active');
+                    
+                    // Show selected tool
+                    showTool(tool);
+                });
+            });
+        }
+
+        // Show/hide tools
+        function showTool(toolId) {
+            // Hide all tools
+            const toolSections = document.querySelectorAll('.tool-section');
+            toolSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected tool
+            document.getElementById(toolId).classList.add('active');
+            currentTool = toolId;
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize guide toggles
+        function initializeGuides() {
+            const guideToggles = document.querySelectorAll('.guide-toggle');
+            
+            guideToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const guideId = this.getAttribute('data-guide');
+                    const guideContent = document.getElementById(guideId);
+                    
+                    // Toggle guide visibility
+                    guideContent.classList.toggle('active');
+                    
+                    // Update button text
+                    if (guideContent.classList.contains('active')) {
+                        this.innerHTML = '<span>📋</span> Hide Guide';
+                    } else {
+                        this.innerHTML = '<span>📋</span> How to Use This Tool';
+                    }
+                });
+            });
+        }
+
+        // Download modal functionality
+        function initializeDownloadModal() {
+            const downloadBtn = document.getElementById('download-btn');
+            const downloadModal = document.getElementById('download-modal');
+            const cancelBtn = document.getElementById('cancel-download');
+            const confirmBtn = document.getElementById('confirm-download');
+            const downloadOptions = document.querySelectorAll('.download-option');
+            
+            // Open modal
+            downloadBtn.addEventListener('click', function() {
+                downloadModal.style.display = 'flex';
+            });
+            
+            // Close modal
+            cancelBtn.addEventListener('click', function() {
+                downloadModal.style.display = 'none';
+            });
+            
+            // Select download option
+            downloadOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    downloadOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    downloadType = this.getAttribute('data-type');
+                });
+            });
+            
+            // Confirm download
+            confirmBtn.addEventListener('click', function() {
+                downloadModal.style.display = 'none';
+                executeDownload(downloadType);
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === downloadModal) {
+                    downloadModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Execute download based on type
+        function executeDownload(type) {
+            switch(type) {
+                case 'current-tool':
+                    downloadCurrentTool();
+                    break;
+                case 'all-data':
+                    downloadAllData();
+                    break;
+                case 'pdf-report':
+                    generatePDFReport();
+                    break;
+                case 'csv-data':
+                    downloadCSVData();
+                    break;
+            }
+        }
+
+        // Download current tool data
+        function downloadCurrentTool() {
+            let data = '';
+            let filename = '';
+            
+            switch(currentTool) {
+                case 'budgeting':
+                    data = collectBudgetingData();
+                    filename = 'financial-compass-budgeting-data.txt';
+                    break;
+                case 'genome':
+                    data = collectGenomeData();
+                    filename = 'financial-compass-genome-data.txt';
+                    break;
+                case 'portfolio':
+                    data = collectPortfolioData();
+                    filename = 'financial-compass-portfolio-data.txt';
+                    break;
+                case 'time-dilation':
+                    data = collectTimeDilationData();
+                    filename = 'financial-compass-time-dilation-data.txt';
+                    break;
+                case 'cash-flow':
+                    data = collectCashFlowData();
+                    filename = 'financial-compass-cash-flow-data.txt';
+                    break;
+                case 'immune-system':
+                    data = collectImmuneSystemData();
+                    filename = 'financial-compass-immune-system-data.txt';
+                    break;
+                default:
+                    data = 'No data available for download from the dashboard.';
+                    filename = 'financial-compass-dashboard.txt';
+            }
+            
+            downloadTextFile(data, filename);
+        }
+
+        // Collect data from budgeting tool
+        function collectBudgetingData() {
+            const income = document.getElementById('income').value;
+            const housing = document.getElementById('housing').value;
+            const food = document.getElementById('food').value;
+            const transportation = document.getElementById('transportation').value;
+            const entertainment = document.getElementById('entertainment').value;
+            const savingsGoal = document.getElementById('savings-goal').value;
+            
+            return `Financial Compass - Smart Budgeting System Data\n\n` +
+                   `Income: $${income}\n` +
+                   `Housing Expenses: $${housing}\n` +
+                   `Food & Dining: $${food}\n` +
+                   `Transportation: $${transportation}\n` +
+                   `Entertainment: $${entertainment}\n` +
+                   `Savings Goal: $${savingsGoal}\n\n` +
+                   `Generated on: ${new Date().toLocaleString()}`;
+        }
+
+        // Collect data from genome tool
+        function collectGenomeData() {
+            const spendingCategory = document.getElementById('spending-categories').value;
+            const personalityType = document.getElementById('personality-type').textContent;
+            
+            return `Financial Compass - Financial Genome Project Data\n\n` +
+                   `Spending Category: ${spendingCategory}\n` +
+                   `Personality Type: ${personalityType}\n\n` +
+                   `Generated on: ${new Date().toLocaleString()}`;
+        }
+
+        // Collect data from portfolio tool
+        function collectPortfolioData() {
+            const stocks = document.getElementById('stocks').value;
+            const bonds = document.getElementById('bonds').value;
+            const cash = document.getElementById('cash').value;
+            const riskTolerance = document.getElementById('risk-tolerance').value;
+            const investmentGoal = document.getElementById('investment-goal').value;
+            
+            return `Financial Compass - Quantum Portfolio Optimizer Data\n\n` +
+                   `Current Allocation:\n` +
+                   `  Stocks: ${stocks}%\n` +
+                   `  Bonds: ${bonds}%\n` +
+                   `  Cash: ${cash}%\n` +
+                   `Risk Tolerance: ${riskTolerance}\n` +
+                   `Investment Goal: ${investmentGoal}\n\n` +
+                   `Generated on: ${new Date().toLocaleString()}`;
+        }
+
+        // Collect data from time dilation tool
+        function collectTimeDilationData() {
+            const currentAge = document.getElementById('current-age').value;
+            const retirementAge = document.getElementById('retirement-age').value;
+            const currentSavings = document.getElementById('current-savings').value;
+            const monthlyContribution = document.getElementById('monthly-contribution').value;
+            const expectedReturn = document.getElementById('expected-return').value;
+            
+            return `Financial Compass - Financial Time Dilation Engine Data\n\n` +
+                   `Current Age: ${currentAge}\n` +
+                   `Retirement Age: ${retirementAge}\n` +
+                   `Current Savings: $${currentSavings}\n` +
+                   `Monthly Contribution: $${monthlyContribution}\n` +
+                   `Expected Annual Return: ${expectedReturn}%\n\n` +
+                   `Generated on: ${new Date().toLocaleString()}`;
+        }
+
+        // Collect data from cash flow tool
+        function collectCashFlowData() {
+            const regularIncome = document.getElementById('regular-income').value;
+            const irregularIncome = document.getElementById('irregular-income').value;
+            const fixedExpenses = document.getElementById('fixed-expenses').value;
+            const variableExpenses = document.getElementById('variable-expenses').value;
+            const emergencyFund = document.getElementById('emergency-fund').value;
+            
+            return `Financial Compass - Cash Flow Quantum Field Analyzer Data\n\n` +
+                   `Regular Income: $${regularIncome}\n` +
+                   `Irregular Income: $${irregularIncome}\n` +
+                   `Fixed Expenses: $${fixedExpenses}\n` +
+                   `Variable Expenses: $${variableExpenses}\n` +
+                   `Emergency Fund: $${emergencyFund}\n\n` +
+                   `Generated on: ${new Date().toLocaleString()}`;
+        }
+
+        // Collect data from immune system tool
+        function collectImmuneSystemData() {
+            const income = document.getElementById('immune-income').value;
+            const expenses = document.getElementById('immune-expenses').value;
+            const savings = document.getElementById('immune-savings').value;
+            const emergency = document.getElementById('immune-emergency').value;
+            const debt = document.getElementById('immune-debt').value;
+            
+            return `Financial Compass - Financial Immune System Builder Data\n\n` +
+                   `Monthly Income: $${income}\n` +
+                   `Monthly Expenses: $${expenses}\n` +
+                   `Savings: $${savings}\n` +
+                   `Emergency Fund: $${emergency}\n` +
+                   `Total Debt: $${debt}\n\n` +
+                   `Generated on: ${new Date().toLocaleString()}`;
+        }
+
+        // Download all data
+        function downloadAllData() {
+            const data = 
+                `Financial Compass - Complete Financial Data Export\n\n` +
+                `BUDGETING DATA:\n${collectBudgetingData()}\n\n` +
+                `GENOME DATA:\n${collectGenomeData()}\n\n` +
+                `PORTFOLIO DATA:\n${collectPortfolioData()}\n\n` +
+                `TIME DILATION DATA:\n${collectTimeDilationData()}\n\n` +
+                `CASH FLOW DATA:\n${collectCashFlowData()}\n\n` +
+                `IMMUNE SYSTEM DATA:\n${collectImmuneSystemData()}\n\n` +
+                `Exported on: ${new Date().toLocaleString()}`;
+            
+            downloadTextFile(data, 'financial-compass-complete-data.txt');
+        }
+
+        // Generate PDF report
+        function generatePDFReport() {
+            alert('PDF report generation would be implemented with a library like jsPDF. This is a placeholder for the functionality.');
+            // In a real implementation, we would use jsPDF to generate a PDF report
+        }
+
+        // Download CSV data
+        function downloadCSVData() {
+            const csvData = 
+                `Tool,Parameter,Value\n` +
+                `Budgeting,Income,${document.getElementById('income').value}\n` +
+                `Budgeting,Housing,${document.getElementById('housing').value}\n` +
+                `Budgeting,Food,${document.getElementById('food').value}\n` +
+                `Budgeting,Transportation,${document.getElementById('transportation').value}\n` +
+                `Budgeting,Entertainment,${document.getElementById('entertainment').value}\n` +
+                `Budgeting,Savings Goal,${document.getElementById('savings-goal').value}\n` +
+                `Genome,Spending Category,${document.getElementById('spending-categories').value}\n` +
+                `Portfolio,Stocks,${document.getElementById('stocks').value}\n` +
+                `Portfolio,Bonds,${document.getElementById('bonds').value}\n` +
+                `Portfolio,Cash,${document.getElementById('cash').value}\n` +
+                `Portfolio,Risk Tolerance,${document.getElementById('risk-tolerance').value}\n` +
+                `Portfolio,Investment Goal,${document.getElementById('investment-goal').value}\n` +
+                `Time Dilation,Current Age,${document.getElementById('current-age').value}\n` +
+                `Time Dilation,Retirement Age,${document.getElementById('retirement-age').value}\n` +
+                `Time Dilation,Current Savings,${document.getElementById('current-savings').value}\n` +
+                `Time Dilation,Monthly Contribution,${document.getElementById('monthly-contribution').value}\n` +
+                `Time Dilation,Expected Return,${document.getElementById('expected-return').value}\n` +
+                `Cash Flow,Regular Income,${document.getElementById('regular-income').value}\n` +
+                `Cash Flow,Irregular Income,${document.getElementById('irregular-income').value}\n` +
+                `Cash Flow,Fixed Expenses,${document.getElementById('fixed-expenses').value}\n` +
+                `Cash Flow,Variable Expenses,${document.getElementById('variable-expenses').value}\n` +
+                `Cash Flow,Emergency Fund,${document.getElementById('emergency-fund').value}\n` +
+                `Immune System,Income,${document.getElementById('immune-income').value}\n` +
+                `Immune System,Expenses,${document.getElementById('immune-expenses').value}\n` +
+                `Immune System,Savings,${document.getElementById('immune-savings').value}\n` +
+                `Immune System,Emergency Fund,${document.getElementById('immune-emergency').value}\n` +
+                `Immune System,Debt,${document.getElementById('immune-debt').value}`;
+            
+            downloadTextFile(csvData, 'financial-compass-data.csv');
+        }
+
+        // Helper function to download text files
+        function downloadTextFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // SMART BUDGETING SYSTEM
+        function initializeBudgetingTool() {
+            const calculateBtn = document.getElementById('calculate-budget');
+            calculateBtn.addEventListener('click', calculateBudget);
+            
+            // Calculate on page load
+            calculateBudget();
+        }
+
+        function calculateBudget() {
+            const income = parseFloat(document.getElementById('income').value) || 0;
+            const housing = parseFloat(document.getElementById('housing').value) || 0;
+            const food = parseFloat(document.getElementById('food').value) || 0;
+            const transportation = parseFloat(document.getElementById('transportation').value) || 0;
+            const entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+            const savingsGoal = parseFloat(document.getElementById('savings-goal').value) || 0;
+            
+            const totalExpenses = housing + food + transportation + entertainment;
+            const remaining = income - totalExpenses - savingsGoal;
+            
+            // Calculate percentages
+            const housingPct = (housing / income) * 100;
+            const foodPct = (food / income) * 100;
+            const transportationPct = (transportation / income) * 100;
+            const entertainmentPct = (entertainment / income) * 100;
+            const savingsPct = (savingsGoal / income) * 100;
+            const otherPct = 100 - (housingPct + foodPct + transportationPct + entertainmentPct + savingsPct);
+            
+            // Update chart
+            updateBudgetChart(housingPct, foodPct, transportationPct, entertainmentPct, savingsPct, otherPct);
+            
+            // Update alerts
+            updateBudgetAlerts(housingPct, foodPct, savingsPct, remaining);
+            
+            // Update recommendations
+            updateBudgetRecommendations(income);
+        }
+
+        function updateBudgetChart(housing, food, transportation, entertainment, savings, other) {
+            const ctx = document.getElementById('budget-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (budgetChart) {
+                budgetChart.destroy();
+            }
+            
+            budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Savings', 'Other'],
+                    datasets: [{
+                        data: [housing, food, transportation, entertainment, savings, other],
+                        backgroundColor: [
+                            '#4A90A4',
+                            '#4CAF50',
+                            '#FFC107',
+                            '#E67E22',
+                            '#27AE60',
+                            '#95A5A6'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateBudgetAlerts(housingPct, foodPct, savingsPct, remaining) {
+            const alertsContainer = document.getElementById('budget-alerts');
+            alertsContainer.innerHTML = '';
+            
+            if (housingPct > 35) {
+                alertsContainer.innerHTML += `
+                    <div class="alert alert-danger">
+                        <strong>Warning:</strong> Your housing expenses exceed 35% of your income.
+                    </div>
+                `;
+            } else {
+                alertsContainer.innerHTML += `
+                    <div class="alert alert-success">
+                        <strong>Good job!</strong> Your housing expenses are within the recommended range.
+                    </div>
+                `;
+            }
+            
+            if (foodPct > 15) {
+                alertsContainer.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Attention:</strong> Your food spending is above the recommended 15% of income.
+                    </div>
+                `;
+            }
+            
+            if (savingsPct < 20) {
+                alertsContainer.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Consider:</strong> Try to save at least 20% of your income for optimal financial health.
+                    </div>
+                `;
+            } else {
+                alertsContainer.innerHTML += `
+                    <div class="alert alert-success">
+                        <strong>Excellent!</strong> Your savings rate is at or above the recommended 20%.
+                    </div>
+                `;
+            }
+            
+            if (remaining < 0) {
+                alertsContainer.innerHTML += `
+                    <div class="alert alert-danger">
+                        <strong>Over Budget:</strong> You're spending more than you earn. Consider adjusting your expenses.
+                    </div>
+                `;
+            }
+        }
+
+        function updateBudgetRecommendations(income) {
+            const recommendationsContainer = document.getElementById('budget-recommendations');
+            recommendationsContainer.innerHTML = '';
+            
+            const recommendations = [
+                `Housing: 30% - $${(income * 0.3).toFixed(0)}`,
+                `Food: 12% - $${(income * 0.12).toFixed(0)}`,
+                `Transportation: 10% - $${(income * 0.1).toFixed(0)}`,
+                `Entertainment: 6% - $${(income * 0.06).toFixed(0)}`,
+                `Savings: 20% - $${(income * 0.2).toFixed(0)}`,
+                `Other: 22% - $${(income * 0.22).toFixed(0)}`
+            ];
+            
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                recommendationsContainer.appendChild(li);
+            });
+        }
+
+        // FINANCIAL GENOME PROJECT
+        function initializeGenomeTool() {
+            const analyzeBtn = document.getElementById('analyze-spending');
+            analyzeBtn.addEventListener('click', analyzeSpendingDNA);
+            
+            // Analyze on page load
+            analyzeSpendingDNA();
+        }
+
+        function analyzeSpendingDNA() {
+            const spendingCategory = document.getElementById('spending-categories').value;
+            
+            // Update DNA visualization
+            updateDNAChart(spendingCategory);
+            
+            // Update personality analysis
+            updatePersonalityAnalysis(spendingCategory);
+            
+            // Update projections and recommendations
+            updateProjectionsAndRecommendations(spendingCategory);
+        }
+
+        function updateDNAChart(spendingCategory) {
+            const ctx = document.getElementById('dna-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (dnaChart) {
+                dnaChart.destroy();
+            }
+            
+            // Define data based on spending category
+            let data, backgroundColor;
+            
+            switch(spendingCategory) {
+                case 'balanced':
+                    data = [32, 18, 12, 10, 8, 20];
+                    backgroundColor = ['#4A90A4', '#4CAF50', '#FFC107', '#E67E22', '#9B59B6', '#3498DB'];
+                    break;
+                case 'saver':
+                    data = [28, 15, 10, 5, 12, 30];
+                    backgroundColor = ['#4CAF50', '#27AE60', '#4A90A4', '#3498DB', '#2ECC71', '#1ABC9C'];
+                    break;
+                case 'spender':
+                    data = [35, 22, 15, 12, 5, 11];
+                    backgroundColor = ['#E74C3C', '#E67E22', '#F39C12', '#D35400', '#C0392B', '#FF6B6B'];
+                    break;
+                case 'investor':
+                    data = [30, 16, 10, 8, 25, 11];
+                    backgroundColor = ['#9B59B6', '#3498DB', '#4A90A4', '#2980B9', '#8E44AD', '#5D6D7E'];
+                    break;
+            }
+            
+            dnaChart = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Investments', 'Other'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePersonalityAnalysis(spendingCategory) {
+            const personalityType = document.getElementById('personality-type');
+            const personalityDescription = document.getElementById('personality-description');
+            
+            switch(spendingCategory) {
+                case 'balanced':
+                    personalityType.textContent = 'Balanced Spender';
+                    personalityDescription.textContent = 'You maintain a healthy equilibrium between enjoying life today and preparing for tomorrow. Your financial habits show discipline with occasional well-considered indulgences.';
+                    break;
+                case 'saver':
+                    personalityType.textContent = 'Conservative Saver';
+                    personalityDescription.textContent = 'Security and stability are your financial priorities. You consistently prioritize future needs over present wants, building a strong financial foundation.';
+                    break;
+                case 'spender':
+                    personalityType.textContent = 'Impulsive Spender';
+                    personalityDescription.textContent = 'You tend to prioritize immediate gratification over long-term planning. While this brings short-term enjoyment, it may compromise your financial future.';
+                    break;
+                case 'investor':
+                    personalityType.textContent = 'Strategic Investor';
+                    personalityDescription.textContent = 'You view money as a tool for growth and opportunity. Your spending decisions are often calculated with an eye toward future returns.';
+                    break;
+            }
+        }
+
+        function updateProjectionsAndRecommendations(spendingCategory) {
+            const topCategories = document.getElementById('top-categories');
+            const futureProjections = document.getElementById('future-projections');
+            const genomeRecommendations = document.getElementById('genome-recommendations');
+            
+            // Clear existing content
+            topCategories.innerHTML = '';
+            futureProjections.innerHTML = '';
+            genomeRecommendations.innerHTML = '';
+            
+            // Define content based on spending category
+            let categories, projections, recommendations;
+            
+            switch(spendingCategory) {
+                case 'balanced':
+                    categories = [
+                        'Housing (32%)',
+                        'Food & Dining (18%)',
+                        'Transportation (12%)'
+                    ];
+                    projections = [
+                        '6-month savings: $6,240',
+                        '1-year net worth: +8.5%',
+                        'Debt-free in: 2.3 years'
+                    ];
+                    recommendations = [
+                        'Reduce dining out by 15%',
+                        'Increase retirement contributions',
+                        'Review subscription services'
+                    ];
+                    break;
+                case 'saver':
+                    categories = [
+                        'Housing (28%)',
+                        'Savings & Investments (30%)',
+                        'Food (15%)'
+                    ];
+                    projections = [
+                        '6-month savings: $9,120',
+                        '1-year net worth: +12.2%',
+                        'Debt-free in: 1.5 years'
+                    ];
+                    recommendations = [
+                        'Consider moderate risk investments',
+                        'Allocate more to experiences',
+                        'Review insurance coverage'
+                    ];
+                    break;
+                case 'spender':
+                    categories = [
+                        'Housing (35%)',
+                        'Food & Dining (22%)',
+                        'Entertainment (12%)'
+                    ];
+                    projections = [
+                        '6-month savings: $2,640',
+                        '1-year net worth: +2.1%',
+                        'Debt-free in: 5.8 years'
+                    ];
+                    recommendations = [
+                        'Implement 24-hour purchase rule',
+                        'Create spending limits per category',
+                        'Set up automatic savings'
+                    ];
+                    break;
+                case 'investor':
+                    categories = [
+                        'Investments (25%)',
+                        'Housing (30%)',
+                        'Food (16%)'
+                    ];
+                    projections = [
+                        '6-month savings: $7,800',
+                        '1-year net worth: +14.7%',
+                        'Debt-free in: 1.8 years'
+                    ];
+                    recommendations = [
+                        'Diversify investment portfolio',
+                        'Consider real estate opportunities',
+                        'Review tax optimization strategies'
+                    ];
+                    break;
+            }
+            
+            // Populate the lists
+            categories.forEach(cat => {
+                const li = document.createElement('li');
+                li.textContent = cat;
+                topCategories.appendChild(li);
+            });
+            
+            projections.forEach(proj => {
+                const li = document.createElement('li');
+                li.textContent = proj;
+                futureProjections.appendChild(li);
+            });
+            
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                genomeRecommendations.appendChild(li);
+            });
+        }
+
+        // QUANTUM PORTFOLIO OPTIMIZER
+        function initializePortfolioTool() {
+            const optimizeBtn = document.getElementById('optimize-portfolio');
+            optimizeBtn.addEventListener('click', optimizePortfolio);
+            
+            // Optimize on page load
+            optimizePortfolio();
+        }
+
+        function optimizePortfolio() {
+            const stocks = parseInt(document.getElementById('stocks').value);
+            const bonds = parseInt(document.getElementById('bonds').value);
+            const cash = parseInt(document.getElementById('cash').value);
+            const riskTolerance = document.getElementById('risk-tolerance').value;
+            const investmentGoal = document.getElementById('investment-goal').value;
+            
+            // Calculate recommended allocation based on inputs
+            const recommended = calculateRecommendedAllocation(stocks, bonds, cash, riskTolerance, investmentGoal);
+            
+            // Update portfolio chart
+            updatePortfolioChart(stocks, bonds, cash, recommended.stocks, recommended.bonds, recommended.cash);
+            
+            // Update allocation displays
+            updateAllocationDisplays(stocks, bonds, cash, recommended);
+            
+            // Update risk assessment
+            updateRiskAssessment(riskTolerance, investmentGoal);
+        }
+
+        function calculateRecommendedAllocation(stocks, bonds, cash, riskTolerance, investmentGoal) {
+            let recommendedStocks, recommendedBonds, recommendedCash;
+            
+            // Base recommendations on risk tolerance and investment goal
+            switch(riskTolerance) {
+                case 'conservative':
+                    recommendedStocks = 40;
+                    recommendedBonds = 50;
+                    recommendedCash = 10;
+                    break;
+                case 'moderate':
+                    recommendedStocks = 60;
+                    recommendedBonds = 30;
+                    recommendedCash = 10;
+                    break;
+                case 'aggressive':
+                    recommendedStocks = 80;
+                    recommendedBonds = 15;
+                    recommendedCash = 5;
+                    break;
+            }
+            
+            // Adjust based on investment goal
+            switch(investmentGoal) {
+                case 'retirement':
+                    recommendedStocks = Math.min(recommendedStocks + 5, 90);
+                    recommendedBonds = recommendedBonds - 5;
+                    break;
+                case 'growth':
+                    recommendedStocks = Math.min(recommendedStocks + 10, 95);
+                    recommendedBonds = Math.max(recommendedBonds - 10, 5);
+                    break;
+                case 'income':
+                    recommendedStocks = Math.max(recommendedStocks - 10, 20);
+                    recommendedBonds = recommendedBonds + 10;
+                    break;
+                case 'preservation':
+                    recommendedStocks = Math.max(recommendedStocks - 20, 10);
+                    recommendedBonds = recommendedBonds + 15;
+                    recommendedCash = recommendedCash + 5;
+                    break;
+            }
+            
+            // Normalize to 100%
+            const total = recommendedStocks + recommendedBonds + recommendedCash;
+            if (total !== 100) {
+                const factor = 100 / total;
+                recommendedStocks = Math.round(recommendedStocks * factor);
+                recommendedBonds = Math.round(recommendedBonds * factor);
+                recommendedCash = 100 - recommendedStocks - recommendedBonds;
+            }
+            
+            return {
+                stocks: recommendedStocks,
+                bonds: recommendedBonds,
+                cash: recommendedCash
+            };
+        }
+
+        function updatePortfolioChart(currentStocks, currentBonds, currentCash, recStocks, recBonds, recCash) {
+            const ctx = document.getElementById('portfolio-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (portfolioChart) {
+                portfolioChart.destroy();
+            }
+            
+            portfolioChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Stocks', 'Bonds', 'Cash'],
+                    datasets: [
+                        {
+                            label: 'Current Allocation',
+                            data: [currentStocks, currentBonds, currentCash],
+                            backgroundColor: 'rgba(74, 144, 164, 0.7)',
+                            borderColor: 'rgba(74, 144, 164, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Recommended Allocation',
+                            data: [recStocks, recBonds, recCash],
+                            backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                            borderColor: 'rgba(39, 174, 96, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateAllocationDisplays(stocks, bonds, cash, recommended) {
+            const currentAllocation = document.getElementById('current-allocation');
+            const recommendedAllocation = document.getElementById('recommended-allocation');
+            
+            // Clear existing content
+            currentAllocation.innerHTML = '';
+            recommendedAllocation.innerHTML = '';
+            
+            // Populate current allocation
+            const currentItems = [
+                `Stocks: ${stocks}%`,
+                `Bonds: ${bonds}%`,
+                `Cash: ${cash}%`
+            ];
+            
+            currentItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                currentAllocation.appendChild(li);
+            });
+            
+            // Populate recommended allocation
+            const recommendedItems = [
+                `Stocks: ${recommended.stocks}%`,
+                `Bonds: ${recommended.bonds}%`,
+                `Cash: ${recommended.cash}%`
+            ];
+            
+            recommendedItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                recommendedAllocation.appendChild(li);
+            });
+        }
+
+        function updateRiskAssessment(riskTolerance, investmentGoal) {
+            const riskAssessment = document.getElementById('risk-assessment');
+            
+            // Clear existing content
+            riskAssessment.innerHTML = '';
+            
+            // Define risk metrics based on inputs
+            let volatility, drawdown, sharpeRatio;
+            
+            switch(riskTolerance) {
+                case 'conservative':
+                    volatility = 'Low';
+                    drawdown = '-8%';
+                    sharpeRatio = '0.65';
+                    break;
+                case 'moderate':
+                    volatility = 'Medium';
+                    drawdown = '-12%';
+                    sharpeRatio = '0.85';
+                    break;
+                case 'aggressive':
+                    volatility = 'High';
+                    drawdown = '-18%';
+                    sharpeRatio = '1.05';
+                    break;
+            }
+            
+            // Adjust based on investment goal
+            switch(investmentGoal) {
+                case 'retirement':
+                    sharpeRatio = (parseFloat(sharpeRatio) + 0.05).toFixed(2);
+                    break;
+                case 'growth':
+                    sharpeRatio = (parseFloat(sharpeRatio) + 0.1).toFixed(2);
+                    volatility = 'Medium-High';
+                    break;
+                case 'income':
+                    sharpeRatio = (parseFloat(sharpeRatio) - 0.05).toFixed(2);
+                    volatility = 'Low-Medium';
+                    break;
+                case 'preservation':
+                    sharpeRatio = (parseFloat(sharpeRatio) - 0.1).toFixed(2);
+                    volatility = 'Low';
+                    drawdown = '-5%';
+                    break;
+            }
+            
+            const riskItems = [
+                `Volatility: ${volatility}`,
+                `Max Drawdown: ${drawdown}`,
+                `Sharpe Ratio: ${sharpeRatio}`
+            ];
+            
+            riskItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                riskAssessment.appendChild(li);
+            });
+        }
+
+        // FINANCIAL TIME DILATION ENGINE
+        function initializeTimeDilationTool() {
+            const calculateBtn = document.getElementById('calculate-time-dilation');
+            calculateBtn.addEventListener('click', calculateTimeDilation);
+            
+            // Calculate on page load
+            calculateTimeDilation();
+        }
+
+        function calculateTimeDilation() {
+            const currentAge = parseInt(document.getElementById('current-age').value);
+            const retirementAge = parseInt(document.getElementById('retirement-age').value);
+            const currentSavings = parseFloat(document.getElementById('current-savings').value);
+            const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value);
+            const expectedReturn = parseFloat(document.getElementById('expected-return').value) / 100;
+            
+            // Calculate growth over time
+            const yearsToRetirement = retirementAge - currentAge;
+            const growthData = calculateCompoundGrowth(currentSavings, monthlyContribution, expectedReturn, yearsToRetirement);
+            
+            // Update time chart
+            updateTimeChart(growthData, yearsToRetirement);
+            
+            // Update growth multipliers
+            updateGrowthMultipliers(growthData, yearsToRetirement);
+            
+            // Update milestones and recommendations
+            updateMilestonesAndRecommendations(growthData, yearsToRetirement, monthlyContribution);
+        }
+
+        function calculateCompoundGrowth(initial, monthly, rate, years) {
+            const data = [];
+            let balance = initial;
+            const monthlyRate = rate / 12;
+            const months = years * 12;
+            
+            for (let i = 0; i <= months; i++) {
+                if (i > 0) {
+                    balance = balance * (1 + monthlyRate) + monthly;
+                }
+                
+                // Record yearly balances
+                if (i % 12 === 0) {
+                    data.push({
+                        year: i / 12,
+                        balance: balance
+                    });
+                }
+            }
+            
+            return data;
+        }
+
+        function updateTimeChart(growthData, yearsToRetirement) {
+            const ctx = document.getElementById('time-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (timeChart) {
+                timeChart.destroy();
+            }
+            
+            const labels = growthData.map(data => `Year ${data.year}`);
+            const balances = growthData.map(data => data.balance);
+            
+            timeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: balances,
+                        borderColor: '#4A90A4',
+                        backgroundColor: 'rgba(74, 144, 164, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Portfolio Value ($)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Years'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateGrowthMultipliers(growthData, yearsToRetirement) {
+            const growthMultipliers = document.getElementById('growth-multipliers');
+            growthMultipliers.innerHTML = '';
+            
+            if (growthData.length < 4) return;
+            
+            const multipliers = [
+                { years: 5, value: growthData[5] ? (growthData[5].balance / growthData[0].balance).toFixed(2) : 'N/A' },
+                { years: 10, value: growthData[10] ? (growthData[10].balance / growthData[0].balance).toFixed(2) : 'N/A' },
+                { years: 15, value: growthData[15] ? (growthData[15].balance / growthData[0].balance).toFixed(2) : 'N/A' },
+                { years: yearsToRetirement, value: (growthData[growthData.length - 1].balance / growthData[0].balance).toFixed(2) }
+            ];
+            
+            multipliers.forEach(mult => {
+                const div = document.createElement('div');
+                div.className = 'alert alert-info';
+                div.innerHTML = `<strong>${mult.years}-year growth multiplier:</strong> ${mult.value}x`;
+                growthMultipliers.appendChild(div);
+            });
+        }
+
+        function updateMilestonesAndRecommendations(growthData, yearsToRetirement, monthlyContribution) {
+            const milestones = document.getElementById('milestones');
+            const timeRecommendations = document.getElementById('time-recommendations');
+            
+            // Clear existing content
+            milestones.innerHTML = '';
+            timeRecommendations.innerHTML = '';
+            
+            // Calculate key milestones
+            const hundredK = findYearWhenBalanceReaches(growthData, 100000);
+            const quarterMillion = findYearWhenBalanceReaches(growthData, 250000);
+            const halfMillion = findYearWhenBalanceReaches(growthData, 500000);
+            const million = findYearWhenBalanceReaches(growthData, 1000000);
+            
+            // Populate milestones
+            const milestoneItems = [];
+            
+            if (hundredK !== null) milestoneItems.push(`$100K: Year ${hundredK}`);
+            if (quarterMillion !== null) milestoneItems.push(`$250K: Year ${quarterMillion}`);
+            if (halfMillion !== null) milestoneItems.push(`$500K: Year ${halfMillion}`);
+            if (million !== null) milestoneItems.push(`$1M: Year ${million}`);
+            
+            milestoneItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                milestones.appendChild(li);
+            });
+            
+            // Generate recommendations
+            const recommendationItems = [];
+            
+            if (monthlyContribution < 500) {
+                recommendationItems.push('Consider increasing monthly contributions by 10%');
+            }
+            
+            if (yearsToRetirement > 30) {
+                recommendationItems.push('You have time to take moderate investment risks');
+            } else if (yearsToRetirement < 10) {
+                recommendationItems.push('Consider shifting to more conservative investments');
+            }
+            
+            if (growthData[growthData.length - 1].balance < 1000000) {
+                recommendationItems.push('Explore ways to increase your savings rate');
+            }
+            
+            recommendationItems.push('Review your investment strategy annually');
+            recommendationItems.push('Consider tax-advantaged retirement accounts');
+            
+            recommendationItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                timeRecommendations.appendChild(li);
+            });
+        }
+
+        function findYearWhenBalanceReaches(growthData, target) {
+            for (let i = 0; i < growthData.length; i++) {
+                if (growthData[i].balance >= target) {
+                    return growthData[i].year;
+                }
+            }
+            return null;
+        }
+
+        // CASH FLOW QUANTUM FIELD ANALYZER
+        function initializeCashFlowTool() {
+            const analyzeBtn = document.getElementById('analyze-cash-flow');
+            analyzeBtn.addEventListener('click', analyzeCashFlow);
+            
+            // Analyze on page load
+            analyzeCashFlow();
+        }
+
+        function analyzeCashFlow() {
+            const regularIncome = parseFloat(document.getElementById('regular-income').value);
+            const irregularIncome = parseFloat(document.getElementById('irregular-income').value);
+            const fixedExpenses = parseFloat(document.getElementById('fixed-expenses').value);
+            const variableExpenses = parseFloat(document.getElementById('variable-expenses').value);
+            const emergencyFund = parseFloat(document.getElementById('emergency-fund').value);
+            
+            // Calculate cash flow metrics
+            const totalIncome = regularIncome + irregularIncome;
+            const totalExpenses = fixedExpenses + variableExpenses;
+            const netCashFlow = totalIncome - totalExpenses;
+            const monthsCovered = emergencyFund / totalExpenses;
+            
+            // Update cash flow chart
+            updateCashFlowChart(regularIncome, irregularIncome, fixedExpenses, variableExpenses);
+            
+            // Update cash flow alerts
+            updateCashFlowAlerts(netCashFlow, monthsCovered);
+            
+            // Update outlook and risks
+            updateOutlookAndRisks(netCashFlow, monthsCovered, totalIncome, totalExpenses);
+        }
+
+        function updateCashFlowChart(regularIncome, irregularIncome, fixedExpenses, variableExpenses) {
+            const ctx = document.getElementById('cash-flow-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (cashFlowChart) {
+                cashFlowChart.destroy();
+            }
+            
+            cashFlowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Regular Income', 'Irregular Income', 'Fixed Expenses', 'Variable Expenses'],
+                    datasets: [{
+                        label: 'Monthly Amount ($)',
+                        data: [regularIncome, irregularIncome, -fixedExpenses, -variableExpenses],
+                        backgroundColor: [
+                            'rgba(39, 174, 96, 0.7)',
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(231, 76, 60, 0.7)',
+                            'rgba(230, 126, 34, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(39, 174, 96, 1)',
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(230, 126, 34, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCashFlowAlerts(netCashFlow, monthsCovered) {
+            const cashFlowAlerts = document.getElementById('cash-flow-alerts');
+            cashFlowAlerts.innerHTML = '';
+            
+            if (netCashFlow < 0) {
+                cashFlowAlerts.innerHTML += `
+                    <div class="alert alert-danger">
+                        <strong>Negative Cash Flow:</strong> You're spending more than you earn. This is unsustainable long-term.
+                    </div>
+                `;
+            } else if (netCashFlow < 500) {
+                cashFlowAlerts.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Low Cash Flow:</strong> Your net cash flow is minimal. Consider ways to increase income or reduce expenses.
+                    </div>
+                `;
+            } else {
+                cashFlowAlerts.innerHTML += `
+                    <div class="alert alert-success">
+                        <strong>Positive Cash Flow:</strong> You're living within your means and building savings.
+                    </div>
+                `;
+            }
+            
+            if (monthsCovered < 3) {
+                cashFlowAlerts.innerHTML += `
+                    <div class="alert alert-danger">
+                        <strong>Insufficient Emergency Fund:</strong> Your emergency fund covers only ${monthsCovered.toFixed(1)} months. Aim for 3-6 months.
+                    </div>
+                `;
+            } else if (monthsCovered < 6) {
+                cashFlowAlerts.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Moderate Emergency Fund:</strong> Your emergency fund covers ${monthsCovered.toFixed(1)} months. Consider building to 6 months.
+                    </div>
+                `;
+            } else {
+                cashFlowAlerts.innerHTML += `
+                    <div class="alert alert-success">
+                        <strong>Strong Emergency Fund:</strong> Your emergency fund covers ${monthsCovered.toFixed(1)} months, providing good financial security.
+                    </div>
+                `;
+            }
+        }
+
+        function updateOutlookAndRisks(netCashFlow, monthsCovered, totalIncome, totalExpenses) {
+            const threeMonthOutlook = document.getElementById('three-month-outlook');
+            const sixMonthOutlook = document.getElementById('six-month-outlook');
+            const cashFlowRisks = document.getElementById('cash-flow-risks');
+            
+            // Clear existing content
+            threeMonthOutlook.innerHTML = '';
+            sixMonthOutlook.innerHTML = '';
+            cashFlowRisks.innerHTML = '';
+            
+            // Calculate outlooks
+            const threeMonthSavings = netCashFlow * 3;
+            const sixMonthSavings = netCashFlow * 6;
+            
+            // Populate three-month outlook
+            const threeMonthItems = [
+                `Projected Savings: $${threeMonthSavings.toFixed(0)}`,
+                `Emergency Fund: ${(monthsCovered + (threeMonthSavings / totalExpenses)).toFixed(1)} months`,
+                `Income Stability: ${netCashFlow > 0 ? 'Positive' : 'Concerning'}`
+            ];
+            
+            threeMonthItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                threeMonthOutlook.appendChild(li);
+            });
+            
+            // Populate six-month outlook
+            const sixMonthItems = [
+                `Projected Savings: $${sixMonthSavings.toFixed(0)}`,
+                `Emergency Fund: ${(monthsCovered + (sixMonthSavings / totalExpenses)).toFixed(1)} months`,
+                `Financial Health: ${netCashFlow > 0 ? 'Improving' : 'Deteriorating'}`
+            ];
+            
+            sixMonthItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                sixMonthOutlook.appendChild(li);
+            });
+            
+            // Populate risk factors
+            const riskItems = [];
+            
+            if (netCashFlow < 0) {
+                riskItems.push('Negative cash flow depleting savings');
+            }
+            
+            if (monthsCovered < 3) {
+                riskItems.push('Insufficient emergency fund for unexpected expenses');
+            }
+            
+            if (totalExpenses > totalIncome * 0.8) {
+                riskItems.push('High expense-to-income ratio limits flexibility');
+            }
+            
+            if (riskItems.length === 0) {
+                riskItems.push('Low financial risk profile');
+                riskItems.push('Strong cash flow management');
+            }
+            
+            riskItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                cashFlowRisks.appendChild(li);
+            });
+        }
+
+        // FINANCIAL IMMUNE SYSTEM BUILDER
+        function initializeImmuneSystemTool() {
+            const analyzeBtn = document.getElementById('analyze-financial-health');
+            analyzeBtn.addEventListener('click', analyzeFinancialHealth);
+            
+            // Analyze on page load
+            analyzeFinancialHealth();
+        }
+
+        function analyzeFinancialHealth() {
+            const income = parseFloat(document.getElementById('immune-income').value);
+            const expenses = parseFloat(document.getElementById('immune-expenses').value);
+            const savings = parseFloat(document.getElementById('immune-savings').value);
+            const emergency = parseFloat(document.getElementById('immune-emergency').value);
+            const debt = parseFloat(document.getElementById('immune-debt').value);
+            
+            // Calculate financial health metrics
+            const netCashFlow = income - expenses;
+            const emergencyMonths = emergency / expenses;
+            const savingsRatio = savings / income;
+            const debtToIncome = debt / income;
+            
+            // Calculate vulnerability score (0-100, lower is better)
+            let vulnerabilityScore = 0;
+            
+            // Cash flow component (30% of score)
+            if (netCashFlow < 0) vulnerabilityScore += 30;
+            else if (netCashFlow < 500) vulnerabilityScore += 15;
+            else if (netCashFlow < 1000) vulnerabilityScore += 5;
+            
+            // Emergency fund component (25% of score)
+            if (emergencyMonths < 1) vulnerabilityScore += 25;
+            else if (emergencyMonths < 3) vulnerabilityScore += 15;
+            else if (emergencyMonths < 6) vulnerabilityScore += 5;
+            
+            // Savings component (20% of score)
+            if (savingsRatio < 0.1) vulnerabilityScore += 20;
+            else if (savingsRatio < 0.3) vulnerabilityScore += 10;
+            else if (savingsRatio < 0.5) vulnerabilityScore += 5;
+            
+            // Debt component (25% of score)
+            if (debtToIncome > 1) vulnerabilityScore += 25;
+            else if (debtToIncome > 0.5) vulnerabilityScore += 15;
+            else if (debtToIncome > 0.3) vulnerabilityScore += 10;
+            else if (debtToIncome > 0.1) vulnerabilityScore += 5;
+            
+            // Update immune chart
+            updateImmuneChart(vulnerabilityScore, netCashFlow, emergencyMonths, savingsRatio, debtToIncome);
+            
+            // Update alerts
+            updateImmuneAlerts(vulnerabilityScore, netCashFlow, emergencyMonths, savingsRatio, debtToIncome);
+            
+            // Update protection plan
+            updateProtectionPlan(vulnerabilityScore, netCashFlow, emergencyMonths, savingsRatio, debtToIncome);
+        }
+
+        function updateImmuneChart(vulnerabilityScore, netCashFlow, emergencyMonths, savingsRatio, debtToIncome) {
+            const ctx = document.getElementById('immune-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (immuneChart) {
+                immuneChart.destroy();
+            }
+            
+            immuneChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Cash Flow', 'Emergency Fund', 'Savings', 'Debt Management', 'Overall Resilience'],
+                    datasets: [{
+                        label: 'Your Financial Health',
+                        data: [
+                            Math.max(0, 100 - (netCashFlow < 0 ? 100 : (netCashFlow < 500 ? 50 : (netCashFlow < 1000 ? 20 : 0)))),
+                            Math.max(0, 100 - (emergencyMonths < 1 ? 100 : (emergencyMonths < 3 ? 60 : (emergencyMonths < 6 ? 20 : 0)))),
+                            Math.max(0, 100 - (savingsRatio < 0.1 ? 100 : (savingsRatio < 0.3 ? 50 : (savingsRatio < 0.5 ? 20 : 0)))),
+                            Math.max(0, 100 - (debtToIncome > 1 ? 100 : (debtToIncome > 0.5 ? 60 : (debtToIncome > 0.3 ? 40 : (debtToIncome > 0.1 ? 20 : 0))))),
+                            100 - vulnerabilityScore
+                        ],
+                        backgroundColor: 'rgba(74, 144, 164, 0.2)',
+                        borderColor: 'rgba(74, 144, 164, 1)',
+                        pointBackgroundColor: 'rgba(74, 144, 164, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(74, 144, 164, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+            
+            // Update vulnerability score display
+            document.getElementById('vulnerability-score').textContent = `${vulnerabilityScore}/100`;
+        }
+
+        function updateImmuneAlerts(vulnerabilityScore, netCashFlow, emergencyMonths, savingsRatio, debtToIncome) {
+            const immuneAlerts = document.getElementById('immune-alerts');
+            immuneAlerts.innerHTML = '';
+            
+            if (vulnerabilityScore >= 70) {
+                immuneAlerts.innerHTML += `
+                    <div class="alert alert-danger">
+                        <strong>High Financial Vulnerability:</strong> Your financial immune system is weak. Immediate action is recommended.
+                    </div>
+                `;
+            } else if (vulnerabilityScore >= 40) {
+                immuneAlerts.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Moderate Financial Vulnerability:</strong> Your financial immune system needs strengthening.
+                    </div>
+                `;
+            } else {
+                immuneAlerts.innerHTML += `
+                    <div class="alert alert-success">
+                        <strong>Strong Financial Immune System:</strong> You're well-protected against financial shocks.
+                    </div>
+                `;
+            }
+            
+            if (netCashFlow < 0) {
+                immuneAlerts.innerHTML += `
+                    <div class="alert alert-danger">
+                        <strong>Negative Cash Flow:</strong> You're spending more than you earn, which is the biggest threat to financial health.
+                    </div>
+                `;
+            }
+            
+            if (emergencyMonths < 3) {
+                immuneAlerts.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Weak Emergency Fund:</strong> Build your emergency fund to cover at least 3-6 months of expenses.
+                    </div>
+                `;
+            }
+            
+            if (debtToIncome > 0.4) {
+                immuneAlerts.innerHTML += `
+                    <div class="alert alert-warning">
+                        <strong>High Debt Load:</strong> Your debt is high relative to your income, increasing financial vulnerability.
+                    </div>
+                `;
+            }
+        }
+
+        function updateProtectionPlan(vulnerabilityScore, netCashFlow, emergencyMonths, savingsRatio, debtToIncome) {
+            const protectionPlan = document.getElementById('protection-plan');
+            protectionPlan.innerHTML = '';
+            
+            const planItems = [];
+            
+            if (netCashFlow < 0) {
+                planItems.push('Eliminate negative cash flow by reducing expenses or increasing income');
+            }
+            
+            if (emergencyMonths < 3) {
+                planItems.push(`Build emergency fund to cover ${Math.max(3, 6 - emergencyMonths)} more months of expenses`);
+            }
+            
+            if (savingsRatio < 0.2) {
+                planItems.push('Increase savings rate to at least 20% of income');
+            }
+            
+            if (debtToIncome > 0.3) {
+                planItems.push('Create a debt repayment plan focusing on high-interest debt first');
+            }
+            
+            if (vulnerabilityScore >= 40) {
+                planItems.push('Review insurance coverage (health, disability, life)');
+                planItems.push('Diversify income sources to reduce reliance on single source');
+            }
+            
+            if (planItems.length === 0) {
+                planItems.push('Maintain current financial practices');
+                planItems.push('Continue regular financial health check-ups');
+                planItems.push('Consider increasing investments for long-term growth');
+            }
+            
+            planItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                protectionPlan.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
